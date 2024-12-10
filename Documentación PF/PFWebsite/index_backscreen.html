@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control Panel</title>
+    <link rel="stylesheet" href="styles_backscreen.css">
+    <script>
+        let cycleTime = 60; // Tiempo predeterminado del ciclo
+ 
+        function openModal() {
+            var modal = document.getElementById("myModal");
+            modal.style.display = "block";
+        }
+
+        function closeModal() {
+            var modal = document.getElementById("myModal");
+            modal.style.display = "none";
+        }
+
+        function toggleMode(button) {
+            if (button.innerHTML === "Automático") {
+                button.innerHTML = "Modo";
+                button.style.backgroundColor = "#29260e"; 
+            } else {
+                button.innerHTML = "Automático";
+                button.style.backgroundColor = "#0f2c10"; 
+            }
+        }
+
+     
+        function addContainer() {
+            const container = document.querySelector('.container');
+            const newContainer = document.createElement('div');
+            newContainer.classList.add('rectangle');
+            newContainer.innerHTML = `
+                <h3>Intersección Nueva</h3>
+                <p>Información sobre la nueva intersección.</p>
+                <button class="delete-button" onclick="removeContainer(this)">Eliminar</button>
+            `;
+            container.appendChild(newContainer);
+        }
+
+        function removeContainer(button) {
+            const container = button.closest('.rectangle');
+            container.remove();
+        }
+
+        function togglePower(button) {
+            if (button.innerHTML === "ON") {
+                button.innerHTML = "OFF";
+                button.style.backgroundColor = "#F44336"; 
+            } else {
+                button.innerHTML = "ON";
+                button.style.backgroundColor = "#4CAF50";
+            }
+        }
+
+        function loguerout() {
+            alert('Logged out!');
+        }
+    
+        
+
+function toggleMode(button) {
+    if (button.innerHTML === "Automático") {
+        button.innerHTML = "Manual";
+        button.style.backgroundColor = "#29260e"; 
+        openTimeModal(); // Abre la ventana para cambiar el tiempo
+    } else {
+        button.innerHTML = "Automático";
+        button.style.backgroundColor = "#0f2c10"; 
+        closeTimeModal(); // Cierra la ventana si está abierta
+    }
+
+    const modeValue = button.innerHTML === "Automático";
+    socket.emit('change_mode_auto', { mode: modeValue });
+}
+
+function openTimeModal() {
+    var modal = document.getElementById("timeModal");
+    modal.style.display = "block";
+}
+
+function closeTimeModal() {
+    var modal = document.getElementById("timeModal");
+    modal.style.display = "none";
+}
+
+function setCycleTime() {
+    const input = document.getElementById("timeInput");
+    const newTime = parseInt(input.value);
+
+    if (newTime >= 10 && newTime <= 300) { // Rango permitido
+        cycleTime = newTime;
+        alert(`El nuevo tiempo del ciclo es ${cycleTime} segundos.`);
+        closeTimeModal();
+    } else {
+        alert("Por favor, introduce un valor entre 10 y 300 segundos.");
+    }
+}
+
+    </script>
+    <style>
+      
+        body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-image: url(images/traffic-lights-49701_960_720.jpg) ; 
+    background-size: cover;  
+    background-position: center;  
+    background-attachment: fixed;  
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+  
+add-button {
+            background-color: #060331; 
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            cursor: pointer;
+            border-radius: 6px;
+            font-size: 1em;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            
+        }
+        
+        .add-button:hover {
+            background-color: #0a063d; 
+            transform: scale(1.05);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2); 
+        }
+        .delete-button {
+            margin-top: 10px;
+            background-color: #F44336; 
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 6px;
+            font-size: 0.9em;
+        }
+
+        .delete-button:hover {
+            background-color: #d32f2f;
+        }
+        
+
+        .logout-button {
+            background-color: #060331; 
+            color: white;
+            border: none;
+            font-weight: bold;
+            padding: 12px 20px;
+            cursor: pointer;
+            border-radius: 6px;
+            font-size: 1em;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            margin-right: 100px;
+        }
+
+        .logout-button:hover {
+            background-color: #d84315; 
+            transform: scale(1.05);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2); 
+            
+        }
+
+
+        header {
+            width: 100%; 
+            color: white;
+            padding: 15px 30px;
+            text-align: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        
+
+        
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex: 1;
+            padding-top: 80px; 
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .rectangle {
+    margin-bottom: 20px;
+    padding: 20px;
+    border-radius: 8px;
+    background-color: #01010c; 
+    border: 2px solid #01010c; 
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 200px;
+    transition: transform 0.2s;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    color: rgb(255, 255, 255);
+}
+
+
+/*.rectangle {
+    background-color: #347cca;
+    border: 2px solid #007BFF;
+    border-radius: 8px;
+    padding: 20px;
+    width: 200px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+    cursor: pointer;
+    color: rgb(255, 255, 255);
+}*/
+
+
+.rectangle:hover {
+    background-color: #060331; 
+    transform: scale(1.05);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+}
+
+       
+        .inputs {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6); 
+        }
+
+        .modal-content {
+            background-color: rgba(0, 0, 0, 0.9); 
+            margin: 10% auto;
+            padding: 30px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 1000px;
+            display: flex;
+            flex-direction: row;
+            gap: 30px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: black;
+        }
+
+        .container-section {
+    border: 2px solid #000000; 
+    padding: 20px;
+    border-radius: 8px;
+    background-color: #808092;
+    flex: 1;
+    min-width: 250px;
+    max-width: 350px;
+    overflow: auto;
+    transition: transform 0.3s ease;
+}
+
+
+        
+        .container-section:nth-child(1) {
+            background-color: #808092; 
+        }
+
+        .container-section:nth-child(2) {
+            background-color: #808092; 
+        }
+
+        .container-section:nth-child(3) {
+            background-color: #808092; 
+        }
+
+        .container-section h3 {
+            margin: 0 0 10px 0;
+            color: #0c0c0c;
+        }
+        
+        .container-section h4 {
+            margin: 0 0 10px 0;
+            color: #ffffff;
+        }
+        .controls button {
+            margin: 5px 0;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .mode-button {
+            background-color: #4CAF50; 
+        }
+
+        .mode-button:hover {
+            background-color: #45a049;
+        }
+
+        .power-button {
+            background-color: #4CAF50;
+        }
+
+        .power-button:hover {
+            background-color: #45a049;
+        }
+
+        .controls button {
+            background-color: #28a745; 
+        }
+
+        .controls button:hover {
+            background-color: #218838;
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>ETS Light Website</h1>
+        <button class="add-button" onclick="addContainer()">Add Intersection</button>
+        <button class="logout-button" onclick="window.location.href='index.html';">Logout</button>
+    </header>
+    
+    
+    
+    <div class="container">
+        <div class="rectangle" id="rectangle1" onclick="openModal()">
+            <h3>Intersección #1</h3>
+            <p>Información sobre la intersección #1.</p>
+        </div>
+
+        <div class="rectangle" id="rectangle2">
+            <h3>Intersección #2</h3>
+            <p>Información sobre la intersección #2.</p>
+        </div>
+
+        <div class="rectangle" id="rectangle3">
+            <h3>Intersección #3</h3>
+            <p>Información sobre la intersección #3.</p>
+        </div>
+    </div>
+
+
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+
+            <div class="container-section">
+                <h3>Estados de los Semáforos</h3>
+                <p>Semáforo 1: Desconocido</p>
+                <p>Semáforo 2: Desconocido</p>
+            </div>
+
+            <div class="container-section">
+                <h3>Cantidad de Carros en Cara 1:</h3>
+                <h4>Esperando mensaje...</h4>
+                <h3>Cantidad de Carros en Cara 2:</h3>
+                <h4>Esperando mensaje...</h4>
+            </div>
+
+            <div class="container-section">
+                <h3>Control Manual/Automático & ON/OFF</h3>
+                <button class="mode-button" onclick="toggleMode(this)">Automático</button>
+                <button class="power-button" onclick="togglePower(this)">ON</button>
+            </div>
+
+
+            <div id="timeModal" class="modal">
+                <div class="modal-content">
+                    <span class="close" onclick="closeTimeModal()">&times;</span>
+                    <h3>Tiempo del Ciclo</h3>
+                    <input id="timeInput" type="number" value="60" min="10" max="300" />
+                    <button class="set-button" onclick="setCycleTime()">Set</button>
+                </div>
+            </div>
+            
+            
+            <div class="semaforo">
+                <span class="luces_circulo"></span>
+                <span class="luces_circulo"></span>
+                <span class="luces_circulo"></span>
+            </div>
+        
+        </div>
+    </div>
+    
+</body>
+</html>
